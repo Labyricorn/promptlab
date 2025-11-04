@@ -6,6 +6,10 @@ Main Flask application with CORS configuration
 from flask import Flask, send_from_directory
 from flask_cors import CORS
 import os
+from backend.database import init_database
+from backend.api.prompts import prompts_bp
+from backend.api.ollama import ollama_bp
+from backend.api.config import config_bp
 
 def create_app():
     """Create and configure the Flask application"""
@@ -13,6 +17,14 @@ def create_app():
     
     # Configure CORS for local development
     CORS(app, origins=["http://localhost:5000", "http://127.0.0.1:5000"])
+    
+    # Initialize database
+    init_database()
+    
+    # Register API blueprints
+    app.register_blueprint(prompts_bp)
+    app.register_blueprint(ollama_bp)
+    app.register_blueprint(config_bp)
     
     # Basic health check endpoint
     @app.route('/api/health')
